@@ -6,9 +6,16 @@ const express = require('express');
 const _ = require('underscore');
 
 const Usuario = require('../models/usuario')
+const { VerificarToken, verificaAdminRole } = require('../middlewares/autenticacion');
 const app = express();
 
-app.get('/usuario', function(req, res) {
+app.get('/usuario', VerificarToken, (req, res) => {
+
+    // return res.json({
+    //     usuario: req.usuario,
+    //     nombre: req.usuario.nombre,
+    //     email: req.usuario.email
+    // });
 
     //Para filtrar desde donde quiere 
     let desde = req.query.desde || 0;
@@ -42,7 +49,7 @@ app.get('/usuario', function(req, res) {
 
 });
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [VerificarToken, verificaAdminRole], (req, res) => {
 
     let body = req.body;
 
@@ -84,7 +91,7 @@ app.post('/usuario', function(req, res) {
 
 });
 
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [VerificarToken, verificaAdminRole], (req, res) => {
 
     //Obteniendo el id
     let id = req.params.id;
@@ -112,7 +119,7 @@ app.put('/usuario/:id', function(req, res) {
 
 });
 
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [VerificarToken, verificaAdminRole], (req, res) => {
 
     let id = req.params.id;
     let cambiaEstado = {
